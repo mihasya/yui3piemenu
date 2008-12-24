@@ -11,6 +11,10 @@ to add items to it from within javascript will be added shortly.
 @todo two _anim objects for items, conscious of each other (buffering)
         i.e. if one is actively running, assign next animation to the 
         other one and only stop the first one when the second one is ready to go
+@todo figure out if it's possible to animate along a curve so rotate animations
+        can be single animation objects, instead of the new position having to
+        be recalculated all the damn time.
+@todo add an event for "open complete" so that other animations know to wait
 @todo "swaying" idle animation (customizable)
 @todo extensive demos/docs
 
