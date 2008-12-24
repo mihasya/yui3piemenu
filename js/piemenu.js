@@ -9,25 +9,30 @@ http://developer.yahoo.net/yui/license.txt
 function pieItem(el, conf) {
     var _el, _width, _height, _anchor, _x, _y;
     
-    var _anim; //should only be performing one animation at a time
+    var _anim; //this item's animation object
     
     _el = el;
     
     return {
-        reposition: function(new_x, new_y, Y) {
-            //console.log(_el + " moving to "+new_x+", "+new_y);
-            _anim = new Y.Anim({
-                node: _el,
-                to: {
-                    left: new_x,
-                    top: new_y
-                }
-            });
-            _anim.set('duration', .5)
+        setAnim: function(anim) {
+            _anim = anim;
+        },
+        runAnim: function() {
             _anim.run();
+        },
+        reposition: function(new_x, new_y) {
+            _x = new_x;
+            _y = new_y;
+            return;
         },
         getEl: function() {
             return _el;
+        },
+        getX: function() {
+            return _x;
+        },
+        getY: function() {
+            return _y;
         }
     };
 }
@@ -145,17 +150,41 @@ Y.extend(Piemenu, Y.Widget, {
         if (this.get(VISIBLE) == true) {
             this.show();
             this._positionItems();
+            this._scheduleAnimation();
+            this._animate();
         }
     },
-    
-    _positionItems: function() {
+    _scheduleAnimation: function() {
+        var len = this._items.length;
+        var i = 0;
+        for (i = 0; i < len; i++) {
+            var item = this._items[i];
+            var anim = new Y.Anim({
+                node: item.getEl(),
+                to: {
+                    left: item.getX(),
+                    top: item.getY(),
+                }
+            });
+            anim.set('duration', .5)
+            item.setAnim(anim);
+        }
+    },
+    _animate: function (item) {
+        var len = this._items.length;
+        var i = 0;
+        for (i = 0; i < len; i++) {
+            this._items[i].runAnim();
+        }
+    },
+    _positionItems: function(skew) {
         var len = this._items.length;
         var slice = circle / len;
         var i;
         for (i=0; i<len;i++) {
             var new_x = this._center['x'] + sin(slice * i) * this.get(RADIUS);
             var new_y = this._center['y'] - cos(slice * i) * this.get(RADIUS);
-            this._items[i].reposition(new_x, new_y, Y);
+            this._items[i].reposition(new_x, new_y);
         }
     }
     
