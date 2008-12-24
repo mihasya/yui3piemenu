@@ -4,6 +4,10 @@ This is a simple YUI3 widget for creating a Pie menu. By default, it expects
 that the items intended as menu items will be within the container div. Methods
 to add items to it from within javascript will be added shortly.
 
-Planned features:
- - Custom open/close animations
- - "Idle" animations, such as the menu swaying back and forth (custimizable)
+@todo add "close" method that animates the items to the middle, then hides
+@todo "move" method for adjusting x and y (conscious of anchor)
+@todo move item positioning into main class as a method for easy customization
+@todo add validation to ATTR, as well as "writeOnce" where appropriate
+@todo shrink and expand items when closing and opening
+@todo "swaying" idle animation (customizable)
+@todo extensive demos/docs
