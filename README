@@ -5,9 +5,14 @@ that the items intended as menu items will be within the container div. Methods
 to add items to it from within javascript will be added shortly.
 
 @todo add "close" method that animates the items to the middle, then hides
-@todo "move" method for adjusting x and y (conscious of anchor)
-@todo move item positioning into main class as a method for easy customization
+@todo add "move" method for adjusting x and y (conscious of anchor)
 @todo add validation to ATTR, as well as "writeOnce" where appropriate
 @todo shrink and expand items when closing and opening
+@todo two _anim objects for items, conscious of each other (buffering)
+        i.e. if one is actively running, assign next animation to the 
+        other one and only stop the first one when the second one is ready to go
 @todo "swaying" idle animation (customizable)
 @todo extensive demos/docs
+
+DONE:
+@todo move item positioning into main class as a method for easy customization

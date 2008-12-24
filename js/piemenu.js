@@ -178,12 +178,15 @@ Y.extend(Piemenu, Y.Widget, {
         }
     },
     _positionItems: function(skew) {
+        skew = (skew) ? skew = (circle/360) * skew : 0;
+
         var len = this._items.length;
         var slice = circle / len;
         var i;
+        var r = this.get(RADIUS);
         for (i=0; i<len;i++) {
-            var new_x = this._center['x'] + sin(slice * i) * this.get(RADIUS);
-            var new_y = this._center['y'] - cos(slice * i) * this.get(RADIUS);
+            var new_x = this._center['x'] + sin(slice * i + skew) * r;
+            var new_y = this._center['y'] - cos(slice * i + skew) * r;
             this._items[i].reposition(new_x, new_y);
         }
     }
