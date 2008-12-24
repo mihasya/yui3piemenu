@@ -1,0 +1,9 @@
+Piemenu YUI3 Widget by Mikhail Panchenko <m@mihasya.com>
+
+This is a simple YUI3 widget for creating a Pie menu. By default, it expects 
+that the items intended as menu items will be within the container div. Methods
+to add items to it from within javascript will be added shortly.
+
+Planned features:
+ - Custom open/close animations
+ - "Idle" animations, such as the menu swaying back and forth (custimizable)
