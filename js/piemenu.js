@@ -5,24 +5,62 @@ BSD License - have at it!
 http://developer.yahoo.net/yui/license.txt
 */
 
+YUI.add('piemenu', function(Y) {
+
 /*define the item class that we will use later*/
-function pieItem(el, conf) {
-    var _el, _width, _height, _anchor, _x, _y;
-    
+function pieItem(el, anchor) {
+    var _el, _anchor, _x, _y, _width, _height, _region;
+
     var _anim; //this item's animation object
-    
+
     _el = el;
+    _region = _el.get('region');
+    _anchor = anchor;
+    _el.setStyle('overflow', 'hidden');
+
+    _region = _el.get('region');
+    _width = _region['width'];
+    _height = _region['height'];
     
     return {
+        getAnim: function() {
+            return _anim;
+        },
         setAnim: function(anim) {
             _anim = anim;
         },
         runAnim: function() {
             _anim.run();
         },
-        reposition: function(new_x, new_y) {
-            _x = new_x;
-            _y = new_y;
+        //set item properties. this might be getting sloppy...
+        reposition: function(new_x, new_y, new_width, new_height) {
+            switch (_anchor) {
+                case ANCHOR_CENTER: {
+                    _x = new_x - _region['width']/2;
+                    _y = new_y - _region['width']/2;
+                    break;
+                }
+                case ANCHOR_TOPLEFT: {
+                    _x = new_x;
+                    _y = new_y;
+                    break;
+                }
+            }
+            //dimensions
+            if (new_width && new_width == ITEM_SIZE_ORIG) {
+                _width = _region['width'];
+            } else if (new_width !== null) {
+                _width = new_width;
+            } else {
+                _width = _region['width'];
+            }
+            if (new_height && new_height == ITEM_SIZE_ORIG) {
+                _height = _region['height'];
+            } else if (new_height !== null) {
+                _height = new_height;
+            } else {
+                _width = _region['width'];
+            }
             return;
         },
         getEl: function() {
@@ -33,11 +71,15 @@ function pieItem(el, conf) {
         },
         getY: function() {
             return _y;
+        },
+        getWidth: function() {
+            return _width;
+        },
+        getHeight: function() {
+            return _height;
         }
     };
 }
-
-YUI.add('piemenu', function(Y) {
     
 //constants
 var CONTENT_BOX =   'contentBox',
@@ -49,9 +91,12 @@ var CONTENT_BOX =   'contentBox',
     RADIUS   = 'radius',
     VISIBLE  = 'visible',
     ANCHOR   = 'anchor',
+    ITEMANCHOR = 'itemAnchor',
     ANCHOR_CENTER   = 'center',
     ANCHOR_TOPLEFT  = 'topleft',
     ANCHOR_NONE  = 'none',
+    
+    ITEM_SIZE_ORIG = '-1',
     
     //math stuff
     sin      = Math.sin,
@@ -91,6 +136,12 @@ Y.mix(Piemenu, {
         },
         anchor: {
             value: ANCHOR_CENTER
+        },
+        itemAnchor: {
+            value: ANCHOR_CENTER
+        },
+        animate: {
+            value: true
         }
     }
 });
@@ -99,6 +150,7 @@ Y.mix(Piemenu, {
 Y.extend(Piemenu, Y.Widget, {
     _items:     [],
     _center:    {},
+    
     /*append/remove any needed elements*/
     renderUI: function() {
         this.hide(); //hide while we set hte table
@@ -122,12 +174,22 @@ Y.extend(Piemenu, Y.Widget, {
             }
         }
     },
-    
+    open: function() {
+        this._positionItems();
+        this._scheduleAnimation();
+        this._animate();
+        this.show();
+    },
     show: function() {
-        this.get(BOUNDING_BOX).setStyle('display', 'block');
+        this.get(BOUNDING_BOX).setStyle('visibility', 'visible');
+    },
+    close: function() {
+        this._hideItems();
+        this._scheduleClose();
+        this._animate();
     },
     hide: function() {
-        this.get(BOUNDING_BOX).setStyle('display', 'none');
+        this.get(BOUNDING_BOX).setStyle('visibility', 'hidden');
     },
     /*bind events*/
     bindUI: function() {
@@ -136,37 +198,59 @@ Y.extend(Piemenu, Y.Widget, {
     /*sync widget with state*/
     syncUI: function() {
         var cb = this.get(CONTENT_BOX);
-        var children = cb.get('children');
         //since .each usurps this., we need to localize the vars
+        items = this._items;
         center=this._center;
         center['x'] = this.get(WIDTH) / 2;
         center['y'] = this.get(HEIGHT) / 2;
-        items = this._items;
+        var children = cb.get('children');
+        var anchor = this.get(ITEMANCHOR);
         children.each(function(child) {
             child.setStyle('left', center['x']+'px');
             child.setStyle('top', center['y']+'px');
-            items.push(new pieItem(child, {}));
+            items.push(new pieItem(child, anchor));
+            child.setStyle('width', 0);
+            child.setStyle('height', 0);
         });
         if (this.get(VISIBLE) == true) {
-            this.show();
-            this._positionItems();
-            this._scheduleAnimation();
-            this._animate();
+            this.open();
         }
     },
-    _scheduleAnimation: function() {
+    //broken out into its own function for now to ensure 0 target sizes
+    _scheduleClose: function() {
         var len = this._items.length;
-        var i = 0;
-        for (i = 0; i < len; i++) {
+        for (var i = 0; i < len; i++) {
             var item = this._items[i];
             var anim = new Y.Anim({
                 node: item.getEl(),
                 to: {
                     left: item.getX(),
                     top: item.getY(),
+                    width: 0,
+                    height: 0
                 }
             });
-            anim.set('duration', .5)
+            anim.set('duration', 1);
+            if (i == len - 1) {
+                anim.on('end', this.hide, this);
+            }
+            item.setAnim(anim);
+        }
+    },
+    _scheduleAnimation: function() {
+        var len = this._items.length;
+        for (var i = 0; i < len; i++) {
+            var item = this._items[i];
+            var anim = new Y.Anim({
+                node: item.getEl(),
+                to: {
+                    left: item.getX(),
+                    top: item.getY(),
+                    width: item.getWidth(),
+                    height: item.getHeight()
+                }
+            });
+            anim.set('duration', 1);
             item.setAnim(anim);
         }
     },
@@ -179,18 +263,24 @@ Y.extend(Piemenu, Y.Widget, {
     },
     _positionItems: function(skew) {
         skew = (skew) ? skew = (circle/360) * skew : 0;
-
         var len = this._items.length;
         var slice = circle / len;
-        var i;
         var r = this.get(RADIUS);
-        for (i=0; i<len;i++) {
+        for (var i=0; i<len;i++) {
             var new_x = this._center['x'] + sin(slice * i + skew) * r;
             var new_y = this._center['y'] - cos(slice * i + skew) * r;
-            this._items[i].reposition(new_x, new_y);
+            this._items[i].reposition(new_x, new_y, 
+                                ITEM_SIZE_ORIG, ITEM_SIZE_ORIG);
+        }
+    },
+    _hideItems: function() {
+        var len = this._items.length;
+        var x = this._center['x'];
+        var y = this._center['y'];
+        for (var i=0; i<len;i++) {
+            this._items[i].reposition(x, y, 0 , 0);
         }
     }
-    
 });
 
 //add to the YUI object.
