@@ -11,9 +11,6 @@ P1:
 @todo add validation to ATTR, as well as "writeOnce" where appropriate
 
 P2:
-@todo add "desired position" to pieItem so as to avoid having a separate 
-        _scheduleClose method (reuse _scheduleAnimation)
-@todo make _scheduleAnimation smarter (take advantage of desired position)
 @todo two _anim objects for items, conscious of each other (buffering)
         i.e. if one is actively running, assign next animation to the 
         other one and only stop the first one when the second one is ready to go
@@ -21,7 +18,6 @@ P2:
         can be single animation objects, instead of the new position having to
         be recalculated all the damn time.
 @todo "swaying" idle animation (customizable)
-
 
 
 DONE:
@@ -32,3 +28,4 @@ DONE:
 @todo cutomizable animation speeds
 @todo add "hard" reposition methods to pieItem to manually shift the elements
         without animation
+@todo add event for closing the menu when losing focus
