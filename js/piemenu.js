@@ -16,6 +16,7 @@ function pieItem(el, anchor) {
     _el = el;
     _region = _el.get('region');
     _anchor = anchor;
+    _el.setStyle('position', 'absolute');
     _el.setStyle('overflow', 'hidden');
 
     _region = _el.get('region');
