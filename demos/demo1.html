@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<!--TODO REPLACE THIS SHIT WITH A YUI APIS LINK-->
+    <script type="text/javascript" src="../js/yui/build/yui/yui.js" ></script> 
+    <script type="text/javascript" src="../js/piemenu.js" ></script>
+	<title>index</title>
+	<style>
+	    #piemenu_parent {
+	        background: url(imgs/disc.png);
+	        visibility: hidden;
+	    }
+	    #piemenu_content{
+	        background: url(imgs/disc.png);
+	    }
+	    #piemenu_content div {
+	        width: 20px;
+	        height: 20px;
+	        line-height: 22px;
+	        text-align: center;
+	        font-weight: bold;
+	        font-size: 100%;
+	    }
+	    
+	    #items li {
+	        list-style: none;
+	    }
+	</style>
+</head>
+
+<body>
+    <h1>Coolest Mailbox Ever</h1>
+
+    <ul id='items'>
+        <li><img src="imgs/wrench.png" class="anchor" /> RE: Intro to Archeology group project</li>
+        <li><img src="imgs/wrench.png" class="anchor" /> Make your javascript chops bigger! One pilL!</li>
+        <li><img src="imgs/wrench.png" class="anchor" /> Newsbreak: We're all fucked!</li>
+        <li><img src="imgs/wrench.png" class="anchor" /> A letter from a friend!</li>
+    </ul>
+
+    <script type="text/javascript">
+    //todo: get rid of 'base' parameter
+    YUI({ base: '../js/yui/build/'}).use('node','piemenu', function(Y){
+        var piemenu = new Y.Piemenu({
+            boundingBox: '#piemenu_parent',
+            contentBox: '#piemenu_content',
+            width: 71,
+            height: 71,
+            radius: 25,
+            visible: false,
+            anchor: 'center'
+        });
+        piemenu.render('body');
+        var openMenu = function(e) {
+            var el = e.target;
+            var x = el.get('region')['left'] + el.get('region')['width'] / 2;
+            var y = el.get('region')['top'] + el.get('region')['height'] / 2;
+            piemenu.move(x, y);
+            piemenu.open();            
+        };
+        Y.all('.anchor').on('click', openMenu);
+    });
+    </script>
+    <div id="piemenu_parent">
+        <div  id="piemenu_content">
+            <img src="imgs/bomb.png" alt="bomb it!" />
+            <img src="imgs/cd_burn.png" alt="burn it!" />
+            <img src="imgs/clock.png" alt="save it! for laterz!" />
+            <img src="imgs/cog.png" alt="run it!" />
+            <img src="imgs/star.png" alt="love it!" />
+        </div>
+    </div>
+</body>
+</html>
