@@ -5,7 +5,6 @@ that the items intended as menu items will be within the container div. Methods
 to add items to it from within javascript will be added shortly.
 
 P1:
-@todo cutomizable animation speeds
 @todo extensive demos/docs
 @todo add events to communicate state
 @todo make all animations optional; only load anim module when needed
@@ -28,3 +27,4 @@ DONE:
 @todo move item positioning into main class as a method for easy customization
 @todo shrink and expand items when closing and opening
 @todo add "close" method that animates the items to the middle, then hides
+@todo cutomizable animation speeds

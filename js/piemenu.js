@@ -90,13 +90,16 @@ var CONTENT_BOX =   'contentBox',
     HEIGHT   = 'height',
     RADIUS   = 'radius',
     VISIBLE  = 'visible',
+
     ANCHOR   = 'anchor',
     ITEMANCHOR = 'itemAnchor',
     ANCHOR_CENTER   = 'center',
     ANCHOR_TOPLEFT  = 'topleft',
     ANCHOR_NONE  = 'none',
-    
+
     ITEM_SIZE_ORIG = '-1',
+
+    ANIM_DELAY = 'animDelay',
     
     //math stuff
     sin      = Math.sin,
@@ -142,6 +145,9 @@ Y.mix(Piemenu, {
         },
         animate: {
             value: true
+        },
+        animDelay: {
+            value: .25
         }
     }
 });
@@ -234,7 +240,7 @@ Y.extend(Piemenu, Y.Widget, {
                     height: 0
                 }
             });
-            anim.set('duration', 1);
+            anim.set('duration', this.get(ANIM_DELAY));
             if (i == len - 1) {
                 anim.on('end', this.hide, this);
             }
@@ -254,7 +260,7 @@ Y.extend(Piemenu, Y.Widget, {
                     height: item.getHeight()
                 }
             });
-            anim.set('duration', 1);
+            anim.set('duration', this.get(ANIM_DELAY));
             item.setAnim(anim);
         }
     },
