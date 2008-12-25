@@ -28,3 +28,5 @@ DONE:
 @todo cutomizable animation speeds
 @todo add "hard" reposition methods to pieItem to manually shift the elements
         without animation
+@todo add an overlay that prevents anything outside the menu from being clicked
+        when it's open and closes the menu when clicked itself.

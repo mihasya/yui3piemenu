@@ -115,6 +115,10 @@ var CONTENT_BOX =   'contentBox',
     RADIUS   = 'radius',
     VISIBLE  = 'visible',
 
+    //events
+    OPENED    = 'opened',
+    CLOSED    = 'closed',
+
     ANCHOR   = 'anchor',
     ITEMANCHOR = 'itemAnchor',
     ANCHOR_CENTER   = 'center',
@@ -180,7 +184,29 @@ Y.mix(Piemenu, {
 Y.extend(Piemenu, Y.Widget, {
     _items:     [],
     _center:    {},
-    
+    _overlay:   null,
+    initializer: function() {
+        this.publish(OPENED);
+        this.publish(CLOSED);
+        this._overlay = Y.Node.create('<div>&nbsp;</div>');
+        this._overlay.setStyle('position','absolute');
+        this._overlay.setStyle('top','0');
+        this._overlay.setStyle('left','0');
+        this._overlay.setStyle('width','100%');
+        this._overlay.setStyle('height','100%');
+        this._overlay.setStyle('display','none');
+        this._overlay.setStyle('background','#FFFFFF');
+        this._overlay.setStyle('opacity','0');
+        //grrrrrrr
+        if(Y.UA.ie != 0) {
+            this._overlay.setStyle('filter','alpha(opacity=0)');
+        }
+        if(Y.UA.ie == 6) {
+            this._overlay.setStyle('height', this._overlay.get('docHeight'));
+        }
+        this._event = this._overlay.on('click', this.close, this);
+        Y.get('body').insertBefore(this._overlay, this.get(BOUNDING_BOX));
+    },
     /*append/remove any needed elements*/
     renderUI: function() {
         var bb = this.get(BOUNDING_BOX);
@@ -207,6 +233,14 @@ Y.extend(Piemenu, Y.Widget, {
         this.closing = false;
         this._positionItems();
         this._scheduleAnimation();
+        this._items[this._items.length-1].getAnim().on('end', function() {
+            //grrrrrrr
+            if(Y.UA.ie == 6) {
+                this._overlay.setStyle('height',this._overlay.get('docHeight'));
+            }
+            this._overlay.setStyle('display', 'block');
+            this.fire(OPENED);
+        }, this);
         this._animate();
         this.show();
     },
@@ -217,7 +251,11 @@ Y.extend(Piemenu, Y.Widget, {
         this.closing = true;
         this._hideItems();
         this._scheduleAnimation();
-        this._items[this._items.length-1].getAnim().on('end', this.hide, this);
+        this._items[this._items.length-1].getAnim().on('end', function() {
+            this.hide();
+            this.fire(CLOSED);
+        }, this);
+        this._overlay.setStyle('display', 'none');
         this._animate();
     },
     hide: function() {
