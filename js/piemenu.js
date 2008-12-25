@@ -180,7 +180,6 @@ Y.mix(Piemenu, {
 Y.extend(Piemenu, Y.Widget, {
     _items:     [],
     _center:    {},
-    _loseHandle: null,
     
     /*append/remove any needed elements*/
     renderUI: function() {
@@ -208,7 +207,6 @@ Y.extend(Piemenu, Y.Widget, {
         this.closing = false;
         this._positionItems();
         this._scheduleAnimation();
-        this._items[this._items.length-1].getAnim().on('end', this._getFocus, this);
         this._animate();
         this.show();
     },
@@ -220,8 +218,6 @@ Y.extend(Piemenu, Y.Widget, {
         this._hideItems();
         this._scheduleAnimation();
         this._items[this._items.length-1].getAnim().on('end', this.hide, this);
-        this._loseHandle.detach();
-        this._loseHandle = null;
         this._animate();
     },
     hide: function() {
@@ -300,17 +296,6 @@ Y.extend(Piemenu, Y.Widget, {
         var y = this._center['y'];
         for (var i=0; i<len;i++) {
             this._items[i].reposition(x, y, 0, 0);
-        }
-    },
-    _getFocus: function(e) {
-        if (!this._loseHandle) {
-            this._loseHandle = Y.on('click', this._loseFocus, 'document', this);
-        }
-    },
-    _loseFocus: function(e) {
-        var target = e.target;
-        if (target!=this.get(BOUNDING_BOX)) {
-            this.close();
         }
     }
 });

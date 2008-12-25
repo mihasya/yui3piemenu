@@ -28,4 +28,3 @@ DONE:
 @todo cutomizable animation speeds
 @todo add "hard" reposition methods to pieItem to manually shift the elements
         without animation
-@todo add event for closing the menu when losing focus
