@@ -202,6 +202,10 @@ Y.extend(Piemenu, Y.Widget, {
             this.get(BOUNDING_BOX).setStyle('visibility', 'hidden');
         }
     },
+    move: function(x, y) {
+        //@todo: reposition elements to new location so they animate from there on open
+        this._center = { 'x': x, 'y': y};
+    },
     /*bind events*/
     bindUI: function() {
         
