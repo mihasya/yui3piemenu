@@ -175,6 +175,7 @@ Y.extend(Piemenu, Y.Widget, {
         }
     },
     open: function() {
+        this.closing = false;
         this._positionItems();
         this._scheduleAnimation();
         this._animate();
@@ -184,12 +185,15 @@ Y.extend(Piemenu, Y.Widget, {
         this.get(BOUNDING_BOX).setStyle('visibility', 'visible');
     },
     close: function() {
+        this.closing = true;
         this._hideItems();
         this._scheduleClose();
         this._animate();
     },
     hide: function() {
-        this.get(BOUNDING_BOX).setStyle('visibility', 'hidden');
+        if (this.closing) {
+            this.get(BOUNDING_BOX).setStyle('visibility', 'hidden');
+        }
     },
     /*bind events*/
     bindUI: function() {
