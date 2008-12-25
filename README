@@ -4,22 +4,25 @@ This is a simple YUI3 widget for creating a Pie menu. By default, it expects
 that the items intended as menu items will be within the container div. Methods
 to add items to it from within javascript will be added shortly.
 
-@todo add "move" method for adjusting x and y (conscious of anchor)
+P1:
+@todo cutomizable animation speeds
+@todo extensive demos/docs
+@todo add events to communicate state
+@todo make all animations optional; only load anim module when needed
 @todo add validation to ATTR, as well as "writeOnce" where appropriate
+
+P2:
+@todo add "move" method for adjusting x and y (conscious of anchor)
 @todo add "desired position" to pieItem so as to avoid having a separate 
         _scheduleClose method (reuse _scheduleAnimation)
-@todo make _scheduleAnimation smarter
+@todo make _scheduleAnimation smarter (take advantage of desired position)
 @todo two _anim objects for items, conscious of each other (buffering)
         i.e. if one is actively running, assign next animation to the 
         other one and only stop the first one when the second one is ready to go
 @todo figure out if it's possible to animate along a curve so rotate animations
         can be single animation objects, instead of the new position having to
         be recalculated all the damn time.
-@todo add events to communicate state
 @todo "swaying" idle animation (customizable)
-@todo make all animations optional; only load anim module when needed
-@todo cutomizable animation speeds
-@todo extensive demos/docs
 
 DONE:
 @todo move item positioning into main class as a method for easy customization
