@@ -9,7 +9,7 @@ YUI.add('piemenu', function(Y) {
 
 /*define the item class that we will use later*/
 function pieItem(el, anchor) {
-    var _el, _anchor, _x, _y, _width, _height, _region;
+    var _el, _anchor, _x, _y, _width, _height, _region, _actual_x, _actual_y;
 
     var _anim; //this item's animation object
 
@@ -35,16 +35,30 @@ function pieItem(el, anchor) {
         },
         //set item properties. this might be getting sloppy...
         reposition: function(new_x, new_y, new_width, new_height) {
-            switch (_anchor) {
-                case ANCHOR_CENTER: {
-                    _x = new_x - _region['width']/2;
-                    _y = new_y - _region['width']/2;
-                    break;
+            if (new_x) {
+                _x = new_x;
+                switch (_anchor) {
+                    case ANCHOR_CENTER: {
+                        _actual_x = new_x - _region['width']/2;
+                        break;
+                    }
+                    case ANCHOR_TOPLEFT: {
+                        _actual_x = new_x;
+                        break;
+                    }
                 }
-                case ANCHOR_TOPLEFT: {
-                    _x = new_x;
-                    _y = new_y;
-                    break;
+            }
+            if (new_y) {
+                _y = new_y;
+                switch (_anchor) {
+                    case ANCHOR_CENTER: {
+                        _actual_y = new_y - _region['height']/2;
+                        break;
+                    }
+                    case ANCHOR_TOPLEFT: {
+                        _actual_y = new_y;
+                        break;
+                    }
                 }
             }
             //dimensions
@@ -52,17 +66,20 @@ function pieItem(el, anchor) {
                 _width = _region['width'];
             } else if (new_width !== null) {
                 _width = new_width;
-            } else {
-                _width = _region['width'];
             }
             if (new_height && new_height == ITEM_SIZE_ORIG) {
                 _height = _region['height'];
             } else if (new_height !== null) {
                 _height = new_height;
-            } else {
-                _width = _region['width'];
             }
             return;
+        },
+        repositionHard: function(new_x, new_y, new_width, new_height) {
+            this.reposition(new_x, new_y, new_width, new_height);
+            _el.setStyle('left', _actual_x+'px');
+            _el.setStyle('top', _actual_y+'px');
+            _el.setStyle('width', _width);
+            _el.setStyle('height', _height);
         },
         getEl: function() {
             return _el;
@@ -72,6 +89,12 @@ function pieItem(el, anchor) {
         },
         getY: function() {
             return _y;
+        },
+        getActualX: function() {
+            return _actual_x;
+        },
+        getActualY: function() {
+            return _actual_y;
         },
         getWidth: function() {
             return _width;
@@ -160,7 +183,6 @@ Y.extend(Piemenu, Y.Widget, {
     
     /*append/remove any needed elements*/
     renderUI: function() {
-        this.hide(); //hide while we set hte table
         var bb = this.get(BOUNDING_BOX);
         switch (this.get(ANCHOR)) {
             case ANCHOR_TOPLEFT: {
@@ -194,7 +216,8 @@ Y.extend(Piemenu, Y.Widget, {
     close: function() {
         this.closing = true;
         this._hideItems();
-        this._scheduleClose();
+        this._scheduleAnimation();
+        this._items[this._items.length-1].getAnim().on('end', this.hide, this);
         this._animate();
     },
     hide: function() {
@@ -203,8 +226,9 @@ Y.extend(Piemenu, Y.Widget, {
         }
     },
     move: function(x, y) {
-        //@todo: reposition elements to new location so they animate from there on open
-        this._center = { 'x': x, 'y': y};
+        this.set('x', x);
+        this.set('y', y);
+        this.renderUI();
     },
     /*bind events*/
     bindUI: function() {
@@ -212,6 +236,7 @@ Y.extend(Piemenu, Y.Widget, {
     },
     /*sync widget with state*/
     syncUI: function() {
+        this.hide(); //hide while we set hte table
         var cb = this.get(CONTENT_BOX);
         //since .each usurps this., we need to localize the vars
         items = this._items;
@@ -221,35 +246,12 @@ Y.extend(Piemenu, Y.Widget, {
         var children = cb.get('children');
         var anchor = this.get(ITEMANCHOR);
         children.each(function(child) {
-            child.setStyle('left', center['x']+'px');
-            child.setStyle('top', center['y']+'px');
-            items.push(new pieItem(child, anchor));
-            child.setStyle('width', 0);
-            child.setStyle('height', 0);
+            var item = new pieItem(child, anchor);
+            item.repositionHard(center['x'], center['y'], 0, 0);
+            items.push(item);
         });
         if (this.get(VISIBLE) == true) {
             this.open();
-        }
-    },
-    //broken out into its own function for now to ensure 0 target sizes
-    _scheduleClose: function() {
-        var len = this._items.length;
-        for (var i = 0; i < len; i++) {
-            var item = this._items[i];
-            var anim = new Y.Anim({
-                node: item.getEl(),
-                to: {
-                    left: item.getX(),
-                    top: item.getY(),
-                    width: 0,
-                    height: 0
-                }
-            });
-            anim.set('duration', this.get(ANIM_DELAY));
-            if (i == len - 1) {
-                anim.on('end', this.hide, this);
-            }
-            item.setAnim(anim);
         }
     },
     _scheduleAnimation: function() {
@@ -259,8 +261,8 @@ Y.extend(Piemenu, Y.Widget, {
             var anim = new Y.Anim({
                 node: item.getEl(),
                 to: {
-                    left: item.getX(),
-                    top: item.getY(),
+                    left: item.getActualX(),
+                    top: item.getActualY(),
                     width: item.getWidth(),
                     height: item.getHeight()
                 }
@@ -293,7 +295,7 @@ Y.extend(Piemenu, Y.Widget, {
         var x = this._center['x'];
         var y = this._center['y'];
         for (var i=0; i<len;i++) {
-            this._items[i].reposition(x, y, 0 , 0);
+            this._items[i].reposition(x, y, 0, 0);
         }
     }
 });

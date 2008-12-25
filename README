@@ -5,8 +5,6 @@ that the items intended as menu items will be within the container div. Methods
 to add items to it from within javascript will be added shortly.
 
 P1:
-@todo add "hard" reposition methods to pieItem to manually shift the elements
-        without animation (for the benefit of move() if nothing else)
 @todo extensive demos/docs
 @todo add events to communicate state
 @todo make all animations optional; only load anim module when needed
@@ -24,9 +22,13 @@ P2:
         be recalculated all the damn time.
 @todo "swaying" idle animation (customizable)
 
+
+
 DONE:
 @todo add "move" method for adjusting x and y (conscious of anchor)
 @todo move item positioning into main class as a method for easy customization
 @todo shrink and expand items when closing and opening
 @todo add "close" method that animates the items to the middle, then hides
 @todo cutomizable animation speeds
+@todo add "hard" reposition methods to pieItem to manually shift the elements
+        without animation
