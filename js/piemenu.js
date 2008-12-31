@@ -121,6 +121,7 @@ var CONTENT_BOX =   'contentBox',
     OPENED    = 'opened',
     START_CLOSE = 'startClose',
     CLOSED    = 'closed',
+    SELECTED = 'selected',
 
     ANCHOR   = 'anchor',
     ITEMANCHOR = 'itemAnchor',
@@ -194,6 +195,7 @@ Y.extend(Piemenu, Y.Widget, {
         this.publish(OPENED);
         this.publish(START_CLOSE);
         this.publish(CLOSED);
+        this.publish(SELECTED);
         this._overlay = Y.Node.create('<div>&nbsp;</div>');
         this._overlay.setStyle('position','absolute');
         this._overlay.setStyle('top','0');
@@ -232,7 +234,9 @@ Y.extend(Piemenu, Y.Widget, {
     },
     /*bind events*/
     bindUI: function() {
-        
+        for (x in this._items) {
+            this._items[x].getEl().on('click', this._selectItem, this);
+        }
     },
     /*sync widget with state*/
     syncUI: function() {
@@ -351,6 +355,9 @@ Y.extend(Piemenu, Y.Widget, {
         for (var i=0; i<len;i++) {
             this._items[i].reposition(x, y, 0, 0);
         }
+    },
+    _selectItem: function(e) {
+        this.fire(SELECTED, { clickEvent: e });
     }
 });
 

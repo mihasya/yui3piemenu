@@ -51,7 +51,7 @@
             height: 71,
             radius: 25,
             visible: false,
-            anchor: 'center'
+            anchor: 'center',
         });
         piemenu.render('body');
         var openMenu = function(e) {
@@ -61,6 +61,9 @@
             piemenu.move(x, y);
             piemenu.open();            
         };
+        piemenu.on('selected', function(e) {
+            alert("You've decided to "+e.clickEvent.target.get('alt'));
+        });
         Y.all('.anchor').on('click', openMenu);
     });
     </script>
