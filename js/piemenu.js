@@ -243,7 +243,7 @@ Y.extend(Piemenu, Y.Widget, {
         var cb = this.get(CONTENT_BOX);
         //since .each usurps this., we need to localize the vars
         var items = this._items;
-        center=this._center;
+        var center=this._center;
         center['x'] = this.get(WIDTH) / 2;
         center['y'] = this.get(HEIGHT) / 2;
         var children = cb.get('children');
