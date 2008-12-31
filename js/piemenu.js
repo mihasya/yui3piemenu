@@ -116,7 +116,9 @@ var CONTENT_BOX =   'contentBox',
     VISIBLE  = 'visible',
 
     //events
+    START_OPEN = 'startOpen',
     OPENED    = 'opened',
+    START_CLOSE = 'startClose',
     CLOSED    = 'closed',
 
     ANCHOR   = 'anchor',
@@ -186,7 +188,9 @@ Y.extend(Piemenu, Y.Widget, {
     _center:    {},
     _overlay:   null,
     initializer: function() {
+        this.publish(START_OPEN);
         this.publish(OPENED);
+        this.publish(START_CLOSE);
         this.publish(CLOSED);
         this._overlay = Y.Node.create('<div>&nbsp;</div>');
         this._overlay.setStyle('position','absolute');
@@ -230,6 +234,7 @@ Y.extend(Piemenu, Y.Widget, {
         }
     },
     open: function() {
+        this.fire(START_OPEN);
         this.closing = false;
         this._positionItems();
         this._scheduleAnimation();
@@ -248,6 +253,7 @@ Y.extend(Piemenu, Y.Widget, {
         this.get(BOUNDING_BOX).setStyle('visibility', 'visible');
     },
     close: function() {
+        this.fire(START_CLOSE);
         this.closing = true;
         this._hideItems();
         this._scheduleAnimation();
