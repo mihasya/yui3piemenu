@@ -9,8 +9,7 @@ P1:
 @todo add events to communicate state
 @todo make all animations optional; only load anim module when needed
 @todo add validation to ATTR, as well as "writeOnce" where appropriate
-@todo test that the overlay works correctly if more content is appended 
-        my guess is that it does not....
+
 
 P2:
 @todo two _anim objects for items, conscious of each other (buffering)
@@ -22,6 +21,7 @@ P2:
 @todo "swaying" idle animation (customizable)
 @todo move all styles to a css file
 
+
 DONE:
 @todo add "move" method for adjusting x and y (conscious of anchor)
 @todo move item positioning into main class as a method for easy customization
@@ -32,3 +32,5 @@ DONE:
         without animation
 @todo add an overlay that prevents anything outside the menu from being clicked
         when it's open and closes the menu when clicked itself.
+@todo test that the overlay works correctly if more content is appended 
+        my guess is that it does not.... (I was correct... fixed in 11697a5)
