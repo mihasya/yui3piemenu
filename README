@@ -21,7 +21,6 @@ P2:
 @todo move all styles to a css file
 @todo replace pieItem class by just extending the element itself, give it props
         so that they can be passed directly to the click event
-@todo figure out why the animation isn't starting at the center
 @todo fix improper positioning when anchor is set to topLeft
         
 

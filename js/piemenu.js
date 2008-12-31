@@ -123,6 +123,8 @@ var CONTENT_BOX =   'contentBox',
     CLOSED    = 'closed',
     SELECTED = 'selected',
 
+    CLOSE_ON_SELECT = 'closeOnSelect',
+
     ANCHOR   = 'anchor',
     ITEMANCHOR = 'itemAnchor',
     ANCHOR_CENTER   = 'center',
@@ -180,6 +182,9 @@ Y.mix(Piemenu, {
         },
         animDelay: {
             value: .15
+        },
+        closeOnSelect: {
+            value: true
         }
     }
 });
@@ -358,6 +363,9 @@ Y.extend(Piemenu, Y.Widget, {
     },
     _selectItem: function(e) {
         this.fire(SELECTED, { clickEvent: e });
+        if (this.get(CLOSE_ON_SELECT)==true) {
+            this.close();
+        }
     }
 });
 
