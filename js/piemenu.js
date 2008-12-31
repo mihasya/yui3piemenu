@@ -282,6 +282,8 @@ Y.extend(Piemenu, Y.Widget, {
         this.show();
     },
     show: function() {
+        Y.get('body').appendChild(this._overlay);
+        Y.get('body').appendChild(this.get(BOUNDING_BOX));
         this.get(BOUNDING_BOX).setStyle('visibility', 'visible');
     },
     close: function() {
