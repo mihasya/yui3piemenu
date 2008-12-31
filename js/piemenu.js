@@ -213,6 +213,27 @@ Y.extend(Piemenu, Y.Widget, {
     },
     /*append/remove any needed elements*/
     renderUI: function() {
+        this.hide(); //hide while we set hte table
+        //since .each usurps this., we need to localize the vars
+        var cb = this.get(CONTENT_BOX);
+        var items = this._items;
+        var center=this._center;
+        center['x'] = this.get(WIDTH) / 2;
+        center['y'] = this.get(HEIGHT) / 2;
+        var children = cb.get('children');
+        var anchor = this.get(ITEMANCHOR);
+        children.each(function(child) {
+            var item = new pieItem(child, anchor);
+            item.repositionHard(center['x'], center['y'], 0, 0);
+            items.push(item);
+        });
+    },
+    /*bind events*/
+    bindUI: function() {
+        
+    },
+    /*sync widget with state*/
+    syncUI: function() {
         var bb = this.get(BOUNDING_BOX);
         switch (this.get(ANCHOR)) {
             case ANCHOR_TOPLEFT: {
@@ -233,26 +254,10 @@ Y.extend(Piemenu, Y.Widget, {
             }
         }
     },
-    /*bind events*/
-    bindUI: function() {
-        
-    },
-    /*sync widget with state*/
-    syncUI: function() {
-        this.hide(); //hide while we set hte table
-        var cb = this.get(CONTENT_BOX);
-        //since .each usurps this., we need to localize the vars
-        var items = this._items;
-        var center=this._center;
-        center['x'] = this.get(WIDTH) / 2;
-        center['y'] = this.get(HEIGHT) / 2;
-        var children = cb.get('children');
-        var anchor = this.get(ITEMANCHOR);
-        children.each(function(child) {
-            var item = new pieItem(child, anchor);
-            item.repositionHard(center['x'], center['y'], 0, 0);
-            items.push(item);
-        });
+    renderer: function() {
+        this.renderUI();
+        this.bindUI();
+        this.syncUI();
         if (this.get(VISIBLE) == true) {
             this.open();
         }
@@ -296,7 +301,7 @@ Y.extend(Piemenu, Y.Widget, {
     move: function(x, y) {
         this.set('x', x);
         this.set('y', y);
-        this.renderUI();
+        this.syncUI();
     },
     _scheduleAnimation: function() {
         var len = this._items.length;
