@@ -116,6 +116,7 @@ var CONTENT_BOX =   'contentBox',
     VISIBLE  = 'visible',
 
     //events
+    READY = 'ready',
     START_OPEN = 'startOpen',
     OPENED    = 'opened',
     START_CLOSE = 'startClose',
@@ -188,6 +189,7 @@ Y.extend(Piemenu, Y.Widget, {
     _center:    {},
     _overlay:   null,
     initializer: function() {
+        this.publish(READY);
         this.publish(START_OPEN);
         this.publish(OPENED);
         this.publish(START_CLOSE);
@@ -258,6 +260,7 @@ Y.extend(Piemenu, Y.Widget, {
         this.renderUI();
         this.bindUI();
         this.syncUI();
+        this.fire(READY);
         if (this.get(VISIBLE) == true) {
             this.open();
         }
